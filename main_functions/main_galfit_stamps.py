@@ -17,6 +17,7 @@ from astropy.table import Table
 import numpy as np
 from astropy.io import fits
 import matplotlib
+import shutil
 matplotlib.use('Agg')
 
 # morphofit imports
@@ -24,6 +25,7 @@ from morphofit.image_utils import cut_stamp, create_bad_pixel_mask_for_stamps, c
 from morphofit.background_estimation import local_background_estimate
 from morphofit.catalogue_managing import find_neighbouring_galaxies_in_stamps
 from morphofit.catalogue_managing import get_best_fit_parameters_from_model_image
+from morphofit.catalogue_managing import get_best_fit_ra_dec
 from morphofit.galfit_stamps_utils import format_properties_for_galfit_on_stamps
 from morphofit.galfit_utils import format_sky_subtraction
 from morphofit.galfit_utils import create_constraints_file_for_galfit, create_galfit_inputfile, run_galfit
@@ -193,6 +195,14 @@ def galfit_on_stamps(args, stamp_index, telescope_name, target_field_name, waveb
         best_fit_background_x_gradient, best_fit_background_y_gradient, reduced_chisquare = \
         get_best_fit_parameters_from_model_image(output_model_image_filename, n_fitted_components, light_profiles)
 
+    # Compute R.A. and Dec. from best-fit x and y positions
+    ra, dec = get_best_fit_ra_dec(
+        os.path.basename(sci_image_stamp_filename),
+        best_fit_source_x_positions,
+        best_fit_source_y_positions,
+        coordinate_frame='icrs'
+    )
+
     logger.info('=============================== save best-fitting parameters table')
     save_best_fit_properties_stamps(best_fit_properties_table_filename, target_galaxies_catalogue,
                                     neighbouring_source_galaxies_catalogue, target_field_name, stamp_index, waveband,
@@ -222,9 +232,12 @@ def main(indices, args):
 
     args = setup(args)
 
-    for index in indices:
+    for j, index in enumerate(indices):
 
-        logger.info('=============================== running on index={}'.format(index))
+        logger.info(
+            '=============================== running on '
+            f'index={index} ({j+1} of {len(indices)})'
+        )
 
         if args.local_or_cluster == 'cluster':
             temp_dir = os.environ['TMPDIR']
@@ -236,7 +249,7 @@ def main(indices, args):
 
         h5pytable_filename = os.path.join(args.h5pytable_folder, args.h5pytable_filename)
 
-        subprocess.run(['cp', h5pytable_filename, temp_dir])
+        shutil.copy(h5pytable_filename, temp_dir)
 
         h5pytable_filename = os.path.join(temp_dir, args.h5pytable_filename)
 

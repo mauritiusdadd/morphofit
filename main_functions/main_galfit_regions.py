@@ -115,6 +115,11 @@ def galfit_on_regions(args, region_index, telescope_name, target_field_name, wav
                                                                  source_galaxies_keys, waveband)
 
     n_fitted_components = len(light_profiles)
+    logger.info(f'=============================== fitted components: {n_fitted_components}')
+
+    if n_fitted_components == 0:
+        logger.info(f'=============================== No component to fit: skipping')
+        return
 
     logger.info('=============================== create soft constraints file for GALFIT')
     create_constraints_file_for_galfit(constraints_file_filename, n_fitted_components)

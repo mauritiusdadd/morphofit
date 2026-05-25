@@ -12,6 +12,7 @@ from astropy.table import Table, Column, hstack, join, unique
 from astropy.coordinates import SkyCoord
 from astropy import units as u
 from astropy.io import fits
+from astropy.wcs import WCS
 import numpy as np
 import os
 import itertools
@@ -488,6 +489,44 @@ def get_background_parameters_from_header(output_model_image_filename):
 
     return background_value, background_x_gradient, background_y_gradient, reduced_chisquare
 
+def get_best_fit_ra_dec(
+    sci_image_file,
+    best_fit_source_x_positions,
+    best_fit_source_y_positions,
+    coordinate_frame='icrs'
+):
+    """
+
+    :param sci_image_file: The path of the input image
+    :param best_fit_source_x_positions: The best-fit x positions of the sources
+    :param best_fit_source_y_positions: The best-fit y positions of the sources
+    :param coordinate_frame: Optional, the coordinate frame of the output R.A.
+                             and Dec. values. If None, the same coordinate
+                             frame of the WCS from in input image is used.
+    :return ra: A numpy ndarray of R.A. coordinates in degrees.
+    :return dec: A numpy ndarray of Dec. coordinates in degrees.
+    """
+    img_header = fits.getheader(sci_image_file)
+    img_wcs = WCS(img_header)
+
+    zipped_pix_coords = zip(
+        best_fit_source_x_positions, best_fit_source_y_positions
+    )
+
+    ra = []
+    dec = []
+    for (x, x_err), (y, y_err) in zipped_pix_coords:
+        # The sky coord are in the same frame of the WCS
+        source_sky_coord = img_wcs.pixel_to_world(x, y)
+
+        if coordinate_frame is not None:
+            # Convert to the desired frame
+            source_sky_coord = source_sky_coord.transform_to(coordinate_frame)
+
+        ra.append(source_sky_coord.ra.to(u.deg).value)
+        dec.append(source_sky_coord.dec.to(u.deg).value)
+
+    return np.array(ra), np.array(dec)
 
 def get_best_fit_parameters_from_model_image(output_model_image_filename, n_fitted_components, light_profiles):
     """
