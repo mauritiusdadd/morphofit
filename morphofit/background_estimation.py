@@ -14,7 +14,7 @@ import numpy as np
 from astropy.io import fits
 import scipy.stats
 from astropy.stats import SigmaClip
-from photutils import Background2D, MedianBackground
+from photutils.background import Background2D, MedianBackground
 
 # morphofit imports
 from morphofit.run_sextractor import get_sextractor_cmd, run_sex_single_mode

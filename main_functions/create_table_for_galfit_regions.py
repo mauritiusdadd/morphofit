@@ -101,7 +101,7 @@ def main(indices, args):
                                                                 args.rms_images_suffix, combinations[j][4])
                                                   .encode('utf8'))
             except Exception as e:
-                print(e)
+                print("Error while selecting rms image regions", str(e))
                 rms_image_region_filenames.append('None'.encode('utf8'))
 
             try:
@@ -109,7 +109,7 @@ def main(indices, args):
                                                                 args.exp_images_suffix, combinations[j][4])
                                                   .encode('utf8'))
             except Exception as e:
-                print(e)
+                print("Error while selecting exp image regions", str(e))
                 exp_image_region_filenames.append('None'.encode('utf8'))
 
             w = np.where(parameters_table['wavebands'] == combinations[j][3])

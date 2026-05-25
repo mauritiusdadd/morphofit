@@ -79,6 +79,9 @@ def run_sextractor(args, telescope_name, target_field_name, root_target_field, s
     zeropoints = get_zeropoints(telescope_name, target_field_name, sci_images, wavebands, e_b_v=e_b_v)
 
     logger.info('=============================== get background')
+    print(">>>>", sextractor_config)
+    print(">>>>", sextractor_params)
+    print(">>>>", sextractor_filter)
     bkg_amps, bkg_sigmas = get_background_parameters(sci_images, wavebands, se_catalogues,
                                                      saturations, zeropoints, effective_gains, pixel_scale,
                                                      psf_fwhm_init_guesses, photo_cmd,

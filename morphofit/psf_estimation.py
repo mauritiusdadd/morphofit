@@ -18,10 +18,10 @@ from scipy.optimize import curve_fit
 # from scipy import linalg
 from astropy.stats import sigma_clipped_stats
 from astropy.stats import SigmaClip
-from photutils import Background2D, MedianBackground
+from photutils.background import Background2D, MedianBackground
 from astropy.nddata import NDData
 from photutils.psf import extract_stars
-from photutils import EPSFBuilder
+from photutils.psf import EPSFBuilder
 # from sklearn import preprocessing
 from sklearn.decomposition import PCA
 

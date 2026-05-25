@@ -538,54 +538,109 @@ def get_best_fit_parameters_from_model_image(output_model_image_filename, n_fitt
     :return:
     """
 
-    parameters_from_header_switcher = {'sersic': get_sersic_parameters_from_header,
-                                       'expdisk': get_expdisk_parameters_from_header,
-                                       'devauc': get_devauc_parameters_from_header}
+    parameters_from_header_switcher = {
+        'sersic': get_sersic_parameters_from_header,
+        'expdisk': get_expdisk_parameters_from_header,
+        'devauc': get_devauc_parameters_from_header
+    }
 
-    best_fit_source_x_positions = np.empty((n_fitted_components, 2), dtype='U50')
-    best_fit_source_y_positions = np.empty((n_fitted_components, 2), dtype='U50')
-    best_fit_total_magnitudes = np.empty((n_fitted_components, 2), dtype='U50')
-    best_fit_effective_radii = np.empty((n_fitted_components, 2), dtype='U50')
-    best_fit_sersic_indices = np.empty((n_fitted_components, 2), dtype='U50')
-    best_fit_axis_ratios = np.empty((n_fitted_components, 2), dtype='U50')
-    best_fit_position_angles = np.empty((n_fitted_components, 2), dtype='U50')
+    best_fit_dict = {
+        x: np.empty((n_fitted_components, 2), dtype='U50')
+        for x in [
+            "best_fit_source_x_positions",
+            "best_fit_source_y_positions",
+            "best_fit_total_magnitudes",
+            "best_fit_effective_radii",
+            "best_fit_sersic_indices",
+            "best_fit_axis_ratios",
+            "best_fit_position_angles",
+        ]
+    }
 
     try:
-        output_model_image_header = fits.getheader(output_model_image_filename, ext=2)
+        output_model_image_header = fits.getheader(
+            output_model_image_filename, ext=2
+        )
 
         for i in range(n_fitted_components):
 
-            get_parameters_from_header = parameters_from_header_switcher.get(light_profiles[i],
-                                                                             lambda: 'Not implemented...')
-            best_fit_source_x_positions[i, :], best_fit_source_y_positions[i, :], best_fit_total_magnitudes[i, :], \
-                best_fit_effective_radii[i, :], best_fit_sersic_indices[i, :], best_fit_axis_ratios[i, :], \
-                best_fit_position_angles[i, :] = get_parameters_from_header(output_model_image_header, i)
+            get_parameters_from_header = parameters_from_header_switcher.get(
+                light_profiles[i], lambda: 'Not implemented...'
+            )
+            
+            fit_pars = get_parameters_from_header(output_model_image_header, i)
+            
+            best_fit_dict["best_fit_source_x_positions"][i, :] = fit_pars[0]
+            best_fit_dict["best_fit_source_y_positions"][i, :] = fit_pars[1]
+            best_fit_dict["best_fit_total_magnitudes"][i, :] = fit_pars[2]
+            best_fit_dict["best_fit_effective_radii"][i, :] = fit_pars[3]
+            best_fit_dict["best_fit_sersic_indices"][i, :] = fit_pars[4]
+            best_fit_dict["best_fit_axis_ratios"][i, :] = fit_pars[5]
+            best_fit_dict["best_fit_position_angles"][i, :] = fit_pars[6]
 
-        best_fit_background_value, best_fit_background_x_gradient, best_fit_background_y_gradient, reduced_chisquare = \
-            get_background_parameters_from_header(output_model_image_header)
+        for k in best_fit_dict.keys():
+            best_fit_dict[k] = delete_star_character(best_fit_dict[k])
 
-        best_fit_source_x_positions, best_fit_source_y_positions, best_fit_total_magnitudes, best_fit_effective_radii, \
-            best_fit_sersic_indices, best_fit_axis_ratios, best_fit_position_angles = \
-            delete_star_character(best_fit_source_x_positions), delete_star_character(best_fit_source_y_positions), \
-            delete_star_character(best_fit_total_magnitudes), delete_star_character(best_fit_effective_radii), \
-            delete_star_character(best_fit_sersic_indices), delete_star_character(best_fit_axis_ratios), \
-            delete_star_character(best_fit_position_angles)
+        bkg_pars = get_background_parameters_from_header(
+            output_model_image_header
+        )
+        best_fit_background_value = bkg_pars[0]
+        best_fit_background_x_gradient = bkg_pars[1]
+        best_fit_background_y_gradient = bkg_pars[2]
+        reduced_chisquare = bkg_pars[3]
+
 
     except Exception as e:
         logger.info(e)
         logger.info('GALFIT crashed...')
-        best_fit_source_x_positions, best_fit_source_y_positions, best_fit_total_magnitudes, best_fit_effective_radii, \
-            best_fit_sersic_indices, best_fit_axis_ratios, best_fit_position_angles, best_fit_background_value, \
-            best_fit_background_x_gradient, best_fit_background_y_gradient, reduced_chisquare = \
-            manage_crashed_galfit(n_fitted_components, best_fit_source_x_positions, best_fit_source_y_positions,
-                                  best_fit_total_magnitudes, best_fit_effective_radii, best_fit_sersic_indices,
-                                  best_fit_axis_ratios, best_fit_position_angles)
+        
+        fit_pars = manage_crashed_galfit(
+            n_fitted_components,
+            best_fit_dict["best_fit_source_x_positions"],
+            best_fit_dict["best_fit_source_y_positions"],
+            best_fit_dict["best_fit_total_magnitudes"],
+            best_fit_dict["best_fit_effective_radii"],
+            best_fit_dict["best_fit_sersic_indices"],
+            best_fit_dict["best_fit_axis_ratios"],
+            best_fit_dict["best_fit_position_angles"]
+        )
 
-    return best_fit_source_x_positions, best_fit_source_y_positions, best_fit_total_magnitudes, \
-        best_fit_effective_radii, best_fit_sersic_indices, best_fit_axis_ratios, best_fit_position_angles, \
-        best_fit_background_value, best_fit_background_x_gradient, best_fit_background_y_gradient, \
+        best_fit_dict["best_fit_source_x_positions"][i, :] = fit_pars[0]
+        best_fit_dict["best_fit_source_y_positions"][i, :] = fit_pars[1]
+        best_fit_dict["best_fit_total_magnitudes"][i, :] = fit_pars[2]
+        best_fit_dict["best_fit_effective_radii"][i, :] = fit_pars[3]
+        best_fit_dict["best_fit_sersic_indices"][i, :] = fit_pars[4]
+        best_fit_dict["best_fit_axis_ratios"][i, :] = fit_pars[5]
+        best_fit_dict["best_fit_position_angles"][i, :] = fit_pars[6]
+        best_fit_background_value = fit_pars[7]
+        best_fit_background_x_gradient = fit_pars[8]
+        best_fit_background_y_gradient = fit_pars[9]
+        reduced_chisquare = fit_pars[10]
+        
+    result = []
+    
+    for k in best_fit_dict.keys():
+        best_fit_dict[k] =  np.array(
+            [
+                [float(x) for x in val]
+                for val in best_fit_dict[k]
+            ],
+            dtype=np.float32
+        )
+    
+    return (
+        best_fit_dict["best_fit_source_x_positions"],
+        best_fit_dict["best_fit_source_y_positions"],
+        best_fit_dict["best_fit_total_magnitudes"],
+        best_fit_dict["best_fit_effective_radii"],
+        best_fit_dict["best_fit_sersic_indices"],
+        best_fit_dict["best_fit_axis_ratios"],
+        best_fit_dict["best_fit_position_angles"],
+        best_fit_background_value,
+        best_fit_background_x_gradient,
+        best_fit_background_y_gradient,
         reduced_chisquare
-
+    )
 
 def manage_crashed_galfit(n_fitted_components, best_fit_source_x_positions, best_fit_source_y_positions,
                           best_fit_total_magnitudes, best_fit_effective_radii, best_fit_sersic_indices,

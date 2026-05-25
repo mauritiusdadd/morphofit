@@ -197,7 +197,7 @@ def galfit_on_stamps(args, stamp_index, telescope_name, target_field_name, waveb
 
     # Compute R.A. and Dec. from best-fit x and y positions
     ra, dec = get_best_fit_ra_dec(
-        os.path.basename(sci_image_stamp_filename),
+        sci_image_stamp_filename,
         best_fit_source_x_positions,
         best_fit_source_y_positions,
         coordinate_frame='icrs'
