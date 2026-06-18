@@ -212,7 +212,7 @@ def get_jwst_gain(img_name):
     h = fits.getheader(img_name, ext=0)
 
     if str(h.get('BUNIT')).strip() == 'MJy/sr':
-        effective_gain = h['EFFEXPTM']
+        effective_gain = 1.0
         instrumental_gain = 1.0
     else:
         effective_gain = h['TEXPTIME']
