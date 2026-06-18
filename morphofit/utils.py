@@ -66,7 +66,10 @@ def get_jwst_saturation(img_name):
         """
 
     header = fits.getheader(img_name)
-    saturation = header['SATURATE']
+    try:
+        saturation = header['SATURATE']
+    except KeyError:
+        saturation = get_generic_saturation(img_name)
 
     return saturation
 
@@ -79,10 +82,7 @@ def get_generic_saturation(img_name):
     """
 
     data = fits.getdata(img_name)
-    newdata = data[~np.isnan(data)]
-    saturation = max(newdata)
-
-    return saturation
+    return np.nanmax(data)
 
 
 def get_saturations(telescope_name, img_names, wavebands):
