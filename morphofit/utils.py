@@ -206,8 +206,14 @@ def get_jwst_gain(img_name):
     """
 
     h = fits.getheader(img_name, ext=0)
-    effective_gain = h['TEXPTIME']
-    instrumental_gain = 2.0  # 2.05 ± 0.4 for short-wave channel, 1.82 ± 0.4 for long-wave channel
+
+    if h.get['BUNIT'] == 'MJy/sr':
+        effective_gain = h['EFFEXPTM']
+        instrumental_gain = 1.0
+    else:
+        effective_gain = h['TEXPTIME']
+        # 2.05 ± 0.4 for short-wave channel, 1.82 ± 0.4 for long-wave channel
+        instrumental_gain = 2.0
 
     return effective_gain, instrumental_gain
 
