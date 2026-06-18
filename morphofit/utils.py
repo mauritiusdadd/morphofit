@@ -143,7 +143,11 @@ def get_jwst_exposure_time(img_name):
         """
 
     h = fits.getheader(img_name, ext=0)
-    exptime = h['TEXPTIME']
+
+    if str(h.get('BUNIT')).strip() == 'MJy/sr':
+        exptime = h['EFFEXPTM']
+    else:
+        exptime = h['TEXPTIME']
 
     return exptime
 
