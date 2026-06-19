@@ -26,7 +26,7 @@ logger = get_logger(__file__)
 def oned_background_estimate(img_name, sextractor_catalog_name, seeing, saturation, zeropoint, gain, pixelscale,
                              photo_cmd, sextractor_binary, sextractor_config, sextractor_params, sextractor_filter,
                              sextractor_nnw, sextractor_checkimages, sextractor_checkimages_endings, rms_image='',
-                             verbose_type='QUITE'):
+                             verbose_type='QUIET'):
     """
     This function computes the background amplitude and rms of images. First we run SE to obtain a segmentation map,
     then we select those pixels which do not belong to sources and on these we perform an iterative sigma clipping.
@@ -100,7 +100,7 @@ def twod_background_estimate(img_name, sigma, box_size, filter_size):
 def get_background_parameters(img_names, wavebands, se_cats, saturations, zeropoints, gains, pixel_scale,
                               psf_fwhm_init_guesses, photo_cmd, sextractor_binary, sextractor_config,
                               sextractor_params, sextractor_filter, sextractor_nnw, sextractor_checkimages,
-                              sextractor_checkimages_endings, rms_images=None, verbose_type='QUITE'):
+                              sextractor_checkimages_endings, rms_images=None, verbose_type='QUIET'):
     """
     This function computes the background noise parameters.
 

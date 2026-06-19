@@ -27,7 +27,7 @@ def get_sextractor_cmd(sci_image, sextractor_catalogue_name, psf_fwhm, saturatio
                        sextractor_filter='gauss_3.0_5x5.conv', sextractor_nnw='default.nnw',
                        sextractor_checkimages=None,
                        sextractor_checkimages_endings=None, rms_image='None',
-                       verbose_type='QUITE'):
+                       verbose_type='QUIET'):
     """
     This function creates the command file for running Source Extractor.
 
@@ -115,7 +115,7 @@ def get_sextractor_forced_cmd(sci_images, detection_image, detection_image_catal
                               sextractor_filter='gauss_3.0_5x5.conv', sextractor_nnw='default.nnw',
                               sextractor_checkimages=None,
                               sextractor_checkimages_endings=None, rms_images=['None'],
-                              detection_rms_image='None', sextractor_psf='None', verbose_type = 'QUITE'):
+                              detection_rms_image='None', sextractor_psf='None', verbose_type = 'QUIET'):
     """
     This function creates a list of commands that are fed to subprocess to run SExtractor. Seeing value should be in
     arcseconds.
