@@ -88,7 +88,8 @@ def run_sextractor(args, telescope_name, target_field_name, root_target_field, s
                                                      sextractor_binary, sextractor_config,
                                                      sextractor_params, sextractor_filter,
                                                      sextractor_nnw, sextractor_checkimages,
-                                                     sextractor_checkimages_endings, rms_images=rms_images)
+                                                     sextractor_checkimages_endings, rms_images=rms_images,
+                                                     verbose_type=args.verbose_type)
 
     logger.info('=============================== get seeing')
     fwhms, betas = get_seeings(telescope_name, sci_images, wavebands, se_catalogues, ext_star_cat, pixel_scale,

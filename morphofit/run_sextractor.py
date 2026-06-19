@@ -26,7 +26,8 @@ def get_sextractor_cmd(sci_image, sextractor_catalogue_name, psf_fwhm, saturatio
                        sextractor_config='default.sex', sextractor_params='default.param',
                        sextractor_filter='gauss_3.0_5x5.conv', sextractor_nnw='default.nnw',
                        sextractor_checkimages=None,
-                       sextractor_checkimages_endings=None, rms_image='None'):
+                       sextractor_checkimages_endings=None, rms_image='None',
+                       verbose_type='QUITE'):
     """
     This function creates the command file for running Source Extractor.
 
@@ -93,7 +94,7 @@ def get_sextractor_cmd(sci_image, sextractor_catalogue_name, psf_fwhm, saturatio
            "-CHECKIMAGE_TYPE", ",".join(checkimages),
            "-CHECKIMAGE_NAME", ",".join(checkimages_names),
            "-CATALOG_TYPE", "FITS_1.0",
-           "-VERBOSE_TYPE", "QUIET"]
+           "-VERBOSE_TYPE", verbose_type]
 
     if os.path.basename(rms_image) != 'None':
         cmd.append("-WEIGHT_TYPE")
