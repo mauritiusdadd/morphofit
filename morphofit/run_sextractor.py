@@ -114,7 +114,7 @@ def get_sextractor_forced_cmd(sci_images, detection_image, detection_image_catal
                               sextractor_filter='gauss_3.0_5x5.conv', sextractor_nnw='default.nnw',
                               sextractor_checkimages=None,
                               sextractor_checkimages_endings=None, rms_images=['None'],
-                              detection_rms_image='None', sextractor_psf='None'):
+                              detection_rms_image='None', sextractor_psf='None', verbose_type = 'QUITE'):
     """
     This function creates a list of commands that are fed to subprocess to run SExtractor. Seeing value should be in
     arcseconds.
@@ -187,7 +187,7 @@ def get_sextractor_forced_cmd(sci_images, detection_image, detection_image_catal
                   "-CHECKIMAGE_TYPE", ",".join(sextractor_checkimages),
                   "-CHECKIMAGE_NAME", ",".join(checkimages_names),
                   "-CATALOG_TYPE", "FITS_1.0",
-                  "-VERBOSE_TYPE", "QUIET"]
+                  "-VERBOSE_TYPE", verbose_type]
     if 'None' not in os.path.basename(detection_rms_image):
         single_cmd.append("-WEIGHT_TYPE")
         single_cmd.append("MAP_RMS, MAP_RMS")

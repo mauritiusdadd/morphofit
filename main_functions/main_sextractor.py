@@ -120,7 +120,8 @@ def run_sextractor(args, telescope_name, target_field_name, root_target_field, s
                                            sextractor_params, sextractor_filter,
                                            sextractor_nnw, sextractor_checkimages,
                                            sextractor_checkimages_endings, rms_images=rms_images,
-                                           detection_rms_image=detect_rms_image_name)
+                                           detection_rms_image=detect_rms_image_name,
+                                           verbose_type=args.verbose_type)
     run_sex_dual_mode(forced_cmd)
 
     logger.info('=============================== get multiband catalogue')
@@ -320,6 +321,8 @@ def setup(args):
                         help='Parameters table suffix')
     parser.add_argument('--multiband_catalogue_suffix', type=str, action='store', default='multiband.forced.cat',
                         help='Multiband catalogue suffix')
+    parser.add_argument('--verbose_type', type=str, default='QUITE',
+                        help='Set sextractor output verbosity')
     args = parser.parse_args(args)
 
     return args
