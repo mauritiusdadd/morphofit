@@ -323,6 +323,7 @@ def setup(args):
     parser.add_argument('--multiband_catalogue_suffix', type=str, action='store', default='multiband.forced.cat',
                         help='Multiband catalogue suffix')
     parser.add_argument('--verbose_type', type=str, default='QUIET',
+    parser.add_argument('--verbose_type', type=str, default='QUIET',
                         help='Set sextractor output verbosity')
     args = parser.parse_args(args)
 

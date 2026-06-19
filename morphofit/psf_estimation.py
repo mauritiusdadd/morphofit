@@ -165,7 +165,7 @@ def beta_seeing_evaluation(sci_image_filename, catalogue, ext_star_catalogue, pi
         size = 51
         cutout = create_cutout_image(x_stars[i], y_stars[i], size, data)
 
-        if np.isnan(np.min(cutout.data)):  # avoids nan in cutouts
+        if any(~np.isfinite(cutout.data)):  # avoids nan in cutouts
             continue
         else:
             if len(cutout.data) == size & len(cutout.data[0]) == size:  # avoids stars at edges
